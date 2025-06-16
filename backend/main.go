@@ -37,11 +37,13 @@ func main() {
 		AllowMethods:     []string{"GET"},
 	}))
 
-	r.Use(middleware.PerClientRateLimiter(100, 100))
-
-	r.GET("/temperature", func(c *gin.Context) {
-		c.JSON(http.StatusOK, generateTemp())
-	})
+	api := r.Group("/")
+	api.Use(middleware.PerClientRateLimiter(100, 100))
+	{
+		api.GET("/temperature", func(c *gin.Context) {
+			c.JSON(http.StatusOK, generateTemp())
+		})
+	}
 
 	r.GET("/ws", func(c *gin.Context) {
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
