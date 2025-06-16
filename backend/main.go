@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -20,7 +21,7 @@ type Temperature struct {
 
 func generateTemp() Temperature {
 	return Temperature{
-		Temperature: 15 + rand.Float64()*30, // 15‑45 °C
+		Temperature: 15 + rand.Float64()*35, // 15‑50 °C
 		Unit:        "Celcius",
 		Timestamp:   time.Now().UTC(),
 	}
@@ -53,7 +54,23 @@ func main() {
 		}
 		defer conn.Close()
 
-		ticker := time.NewTicker(1 * time.Second)
+		const (
+			defaultMs = 1000
+			minMs     = 1000
+			maxMs     = 60000
+		)
+
+		msStr := c.Query("period")
+		periodMs := defaultMs
+		if msStr != "" {
+			if v, err := strconv.Atoi(msStr); err == nil && v >= minMs && v <= maxMs {
+				periodMs = v
+			}
+		}
+		period := time.Duration(periodMs) * time.Millisecond
+		log.Printf("client %s streaming every %v", c.ClientIP(), period)
+
+		ticker := time.NewTicker(period)
 		defer ticker.Stop()
 
 		for t := range ticker.C {
