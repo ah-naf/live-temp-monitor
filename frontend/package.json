@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.10",
     "autoprefixer": "^10.4.21",
+    "k6": "^0.0.0",
     "lucide-react": "^0.515.0",
     "postcss": "^8.5.5",
     "react": "^19.1.0",

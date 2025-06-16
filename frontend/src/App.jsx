@@ -23,7 +23,7 @@ import {
 
 const WS_BASE = import.meta.env.VITE_WS_BASE_URL || "ws://localhost:8080";
 
-const fixedTicks = [15, 25, 35, 45, 55];
+const fixedTicks = [0, 15, 25, 35, 45, 55];
 const formatTime = (d) =>
   `${d.getHours().toString().padStart(2, "0")}:${d
     .getMinutes()
