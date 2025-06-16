@@ -5,12 +5,14 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/joho/godotenv"
 )
 
 type Temperature struct {
@@ -30,10 +32,22 @@ func generateTemp() Temperature {
 var upgrader = websocket.Upgrader{CheckOrigin: func(_ *http.Request) bool { return true }}
 
 func main() {
+	_ = godotenv.Load()
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	origin := os.Getenv("FRONTEND_ORIGIN")
+	if origin == "" {
+		origin = "http://localhost:5173"
+	}
+
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowOrigins:     []string{origin},
 		AllowCredentials: true,
 		AllowMethods:     []string{"GET"},
 	}))
@@ -86,8 +100,8 @@ func main() {
 		}
 	})
 
-	log.Println("Server listening on :8080")
-	if err := r.Run(":8080"); err != nil {
+	log.Println("Server listening on :", port)
+	if err := r.Run(":" + port); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -21,6 +21,8 @@ import {
   X,
 } from "lucide-react";
 
+const WS_BASE = import.meta.env.VITE_WS_BASE_URL || "ws://localhost:8080";
+
 const fixedTicks = [15, 25, 35, 45, 55];
 const formatTime = (d) =>
   `${d.getHours().toString().padStart(2, "0")}:${d
@@ -46,7 +48,7 @@ export default function App() {
     if (isRunning) return;
     if (wsRef.current) wsRef.current.close();
 
-    const ws = new WebSocket(`ws://localhost:8080/ws?period=${intervalMs}`);
+    const ws = new WebSocket(`${WS_BASE}/ws?period=${intervalMs}`);
     wsRef.current = ws;
 
     ws.onopen = () => setConnectionStatus("Connected");
